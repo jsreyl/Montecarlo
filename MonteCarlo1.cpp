@@ -58,7 +58,8 @@ int main(void){
   int teq; //Tiempo de equilibrio, realmente no es un tiempo sino un número de pasos para que la distribución llegue a equilibrio.
   double E,M, sumM, sumM2, sumM4, sumE, sumE2; //Acumuladores, aquí van los valores de energía y magnetización.
   double Eprom, E2prom, Mprom, M2prom, M4prom;
-  double Cv, Xs, Ubinder; //Las cantidades que quiero calcular, capacidad calorífica, suceptibilidad, etc.
+  double Cv, Xs, Ubinder; //Las cantidades que quiero calcular, capacidad calorífica, suceptibilidad, cumulante de Binder.
+  //Con el cumulante de Binder se halla la temeratura crítica.
   
   
   for(kT=0.8;kT<3;kT+=0.1){//Para cada temperatura
@@ -71,6 +72,7 @@ int main(void){
     for(mcss = 0; mcss<teq; mcss++)
       for(mcs=0; mcs<L2;mcs++)
 	Ising.UnPasoDeMetropolis(Beta, Ran64);
+    
     //Tomar N muestras
     //Inicio los acumuladores en cero
     sumM=sumM2=sumM4=sumE=sumE2 = 0.0;
