@@ -8,10 +8,10 @@ const double kB = 1.0;
 
 class SpinSystem{
 private:
-  int s[L][L], E, M; //La caja como un arreglo, la energía y la magnetización.
+  int s[L][L], E, M; //La caja como un arreglo, la energÃ­a y la magnetizaciÃ³n.
 public:
   void InicieTodosAbajo(void);
-  void UnPasoDeMetropolis(double Beta, Crandom & Ran64);//Beta en lugar de beta porque las variables reservadas de c++ empiezan con minúscula.
+  void UnPasoDeMetropolis(double Beta, Crandom & Ran64);//Beta en lugar de beta porque las variables reservadas de c++ empiezan con minÃºscula.
   double GetE(void){return E;};
   double GetM(void){return std::fabs(M);};
 };
@@ -23,19 +23,19 @@ void SpinSystem::InicieTodosAbajo(void){
   M=-L2; E = -2*L2;
 }
 
-void SpinSystem::UnPasoDeMetropolis(double Beta, Crandom & Ran64){ // Miro la estructura de metrópolis y dependiendo del cambio de energía volteo.
+void SpinSystem::UnPasoDeMetropolis(double Beta, Crandom & Ran64){ // Miro la estructura de metrÃ³polis y dependiendo del cambio de energÃ­a volteo.
   int n,i,j; double dE;
   //Escojo un spin al azar;
   n = (int) 16*Ran64.r();  i = n%L; j = n/L;
-  //s[(n%L][n/L]; las columnas son lo que sobra y las filas es la división.
-  //Calculo el dE que se produciría se lo volteo.
-  //La energía entre spines es menos su producto punto e_12 = -s1.s2; si volteo el spin, el cambio en energía es 2e
-  dE = 2*s[i][j]*(s[(i+1)%L][j]+s[(i+L-1)%L][j]+s[i][(j+1)%L]+s[i][(j+L-1)%L]);//Pues tengo 4 vecinos. Condiciones periódicas.
+  //s[(n%L][n/L]; las columnas son lo que sobra y las filas es la divisiÃ³n.
+  //Calculo el dE que se producirÃ­a se lo volteo.
+  //La energÃ­a entre spines es menos su producto punto e_12 = -s1.s2; si volteo el spin, el cambio en energÃ­a es 2e
+  dE = 2*s[i][j]*(s[(i+1)%L][j]+s[(i+L-1)%L][j]+s[i][(j+1)%L]+s[i][(j+L-1)%L]);//Pues tengo 4 vecinos. Condiciones periÃ³dicas.
   if(dE<=0){
     //lo volteo;
     s[i][j]*=-1;
     E+=dE;
-    M+=2*s[i][j]; //La magnetización en ese punto pasa de s a -s, luego después de voltearlo dM = -2s_antes = 2s_después.
+    M+=2*s[i][j]; //La magnetizaciÃ³n en ese punto pasa de s a -s, luego despuÃ©s de voltearlo dM = -2s_antes = 2s_despuÃ©s.
   }  else if (Ran64.r()<std::exp(-Beta*dE)){
     //lo volteo;
     s[i][j]*=-1;
@@ -55,10 +55,11 @@ int main(void){
   Crandom Ran64(1902); //Una semilla diferente a 0
   double kT, Beta;
   int mcs, mcss; //MonteCarlo step and Monte Carlo Step per Site.
-  int teq; //Tiempo de equilibrio, realmente no es un tiempo sino un número de pasos para que la distribución llegue a equilibrio.
-  double E,M, sumM, sumM2, sumM4, sumE, sumE2; //Acumuladores, aquí van los valores de energía y magnetización.
+  int teq; //Tiempo de equilibrio, realmente no es un tiempo sino un nÃºmero de pasos para que la distribuciÃ³n llegue a equilibrio.
+  double E,M, sumM, sumM2, sumM4, sumE, sumE2; //Acumuladores, aquÃ­ van los valores de energÃ­a y magnetizaciÃ³n.
   double Eprom, E2prom, Mprom, M2prom, M4prom;
-  double Cv, Xs, Ubinder; //Las cantidades que quiero calcular, capacidad calorífica, suceptibilidad, etc.
+  double Cv, Xs, Ubinder; //Las cantidades que quiero calcular, capacidad calorÃ­fica, suceptibilidad, cumulante de Binder.
+  //Con el cumulante de Binder se halla la temeratura crÃ­tica.
   
   
   for(kT=0.8;kT<3;kT+=0.1){//Para cada temperatura
@@ -71,6 +72,7 @@ int main(void){
     for(mcss = 0; mcss<teq; mcss++)
       for(mcs=0; mcs<L2;mcs++)
 	Ising.UnPasoDeMetropolis(Beta, Ran64);
+    
     //Tomar N muestras
     //Inicio los acumuladores en cero
     sumM=sumM2=sumM4=sumE=sumE2 = 0.0;
@@ -80,7 +82,7 @@ int main(void){
       M = Ising.GetM();
       sumM+=M; sumM2 +=M*M; sumM4+=M*M*M*M; sumE+=E; sumE2+=E*E;
       
-      //Avanzar hasta la siguiente muestra, uso el tiempo de correlación
+      //Avanzar hasta la siguiente muestra, uso el tiempo de correlaciÃ³n
       for(mcss = 0; mcss<tcorr; mcss++)
 	for(mcs=0; mcs<L2;mcs++)
 	  Ising.UnPasoDeMetropolis(Beta, Ran64);
